@@ -10,6 +10,5 @@ before_install:
   - cpanm --notest Devel::Cover::Report::Coveralls IO::Socket::SSL Mojolicious
 
 script:
-  - cover -test  -ignore_re . -select_re Pingen -report coveralls
-
+  - cover -test  -report coveralls
 
