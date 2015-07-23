@@ -6,7 +6,7 @@ Mojolicious::Plugin::Pingen - Print Package Send Physical letters
 
 =head1 VERSION
 
-0.1.0
+0.1.1
 
 =head1 DESCRIPTION
 
@@ -73,7 +73,7 @@ use Mojo::JSON;
 use POSIX qw(strftime);
 use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 =head1 ATTRIBUTES
 
