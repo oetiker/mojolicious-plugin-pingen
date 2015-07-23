@@ -5,10 +5,12 @@ language: perl
 perl:
   - "5.18"
 
-
 before_install:
   - cpanm --notest Devel::Cover::Report::Coveralls IO::Socket::SSL Mojolicious
 
 script:
-  - cover -test  -report coveralls
+  - cover -test
+
+after_success:
+  - cover -report coveralls
 
