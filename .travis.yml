@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 
 language: perl
 
@@ -9,8 +9,5 @@ before_install:
   - cpanm --notest Devel::Cover::Report::Coveralls IO::Socket::SSL Mojolicious
 
 script:
-  - cover -test
-
-after_success:
-  - cover -report coveralls
+  - cover -test -report coveralls
 
