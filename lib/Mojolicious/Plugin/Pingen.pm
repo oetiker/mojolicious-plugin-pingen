@@ -71,6 +71,8 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::UserAgent;
 use Mojo::JSON;
 use POSIX qw(strftime);
+use Mojo::Exception;
+
 use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
 
 our $VERSION = '0.1.1';
@@ -84,16 +86,22 @@ our $VERSION = '0.1.1';
 This is the location to Stripe payment solution. Will be set to
 L<https://api.pingen.com/>.
 
-=head2 secret
+=head2 apikey
 
   $str = $self->apikey;
 
 The value for the private API key. Available in the Stripe admin gui.
 
+=head2 exceptions
+
+In synchronous mode, this will cause exceptions to be thrown if there is any problem
+with submitting the invoice to pingen.
+
 =cut
 
 has base_url      => 'https://api.pingen.com/';
 has apikey        => 'sk_test_super_secret_key';
+has exceptions    => 0;
 has _ua           => sub { Mojo::UserAgent->new; };
 
 =head1 HELPERS
@@ -222,7 +230,7 @@ sub _document_upload {
         $ua->post( $URL => form => $data => $self->_build_res_cb($cb));
     }
     else {
-        return $ua->post( $URL => form => $data)->res->json;
+        return $self->_tx_to_json($ua->post( $URL => form => $data));
     }
 }
 
@@ -248,7 +256,7 @@ sub _document_send {
         $ua->post( $URL => json => \%data => $self->_build_res_cb($cb));
     }
     else {
-        return $ua->post( $URL => json => \%data)->res->json;
+        return $self->_tx_to_json($ua->post( $URL => json => \%data));
     }
 }
 
@@ -262,7 +270,7 @@ sub _document_delete {
         $ua->post( $URL => $self->_build_res_cb($cb));
     }
     else {
-        return $ua->post( $URL )->res->json;
+        return $self->_tx_to_json($ua->post( $URL ));
     }
 }
 
@@ -276,8 +284,26 @@ sub _send_cancel {
         $ua->post( $URL => $self->_build_res_cb($cb));
     }
     else {
-        return $ua->post( $URL )->res->json;
+        return $self->_tx_to_json($ua->post( $URL ));
     }
+}
+
+sub _tx_to_json {
+    my $self = shift;
+    my $tx = shift;
+    my $error = $tx->error     || {};
+    my $json  = $tx->res->json || {};
+    if ($error->{code}){
+        $json = {
+            error => Mojo::JSON::true,
+            errormessage => $error->{message},
+            errorcode => $error->{code}
+        }
+    }
+    if ($self->exceptions and $json->{error}){
+        Mojo::Exception->throw($json->errormessage);
+    }
+    return $json;
 }
 
 sub _build_res_cb {
@@ -285,16 +311,7 @@ sub _build_res_cb {
     my $cb = shift;
     return sub {
         my ($c,$tx) = @_;
-        my $error = $tx->error     || {};
-        my $json  = $tx->res->json || {};
-        if ($error->{code}){
-            $json = {
-                error => Mojo::JSON::true,
-                errormessage => $error->{message},
-                errorcode => $error->{code}
-            }
-        }
-        $c->$cb($json);
+        $c->$cb($self->_tx_to_json($tx));
     }
 }
 
@@ -421,6 +438,7 @@ sub _mock_interface {
 1;
 
 __END__
+
 =head1 SEE ALSO
 
 =over
