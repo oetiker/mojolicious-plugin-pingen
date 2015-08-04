@@ -75,7 +75,7 @@ use Mojo::Exception;
 
 use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 =head1 ATTRIBUTES
 

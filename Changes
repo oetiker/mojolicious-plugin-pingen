@@ -1,4 +1,8 @@
 Revision history for Business::Payment::SwissESR
 
+0.2.0 2015-08-04
+  - added exceptions option
+  - test sync mode
+
 0.1.1 2015-07-23
   - initial

@@ -4,4 +4,5 @@ Makefile.PL
 README.md
 Changes
 lib/Mojolicious/Plugin/Pingen.pm
-t/0-1apptest.t
+t/01async.t
+t/02sync.t
