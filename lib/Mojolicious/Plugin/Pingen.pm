@@ -21,7 +21,7 @@ if you are using it.
 =head2 Production mode
 
     use Mojolicious::Lite;
-    plugin Pingen => { apikey => $ENV{SUPER_SECRET_STRIPE_KEY} };
+    plugin Pingen => { apikey => $ENV{SUPER_SECRET_PINGEN_KEY} };
 
     post '/send' => sub {
         my $c = shift;
@@ -50,6 +50,8 @@ if you are using it.
 Setting C<mocked> will enable this plugin to work without an actual connection
 to pingen.com. This is done by replicating the behavior of Pingen for those API we support. This is
 especially useful when writing unit tests.
+
+The apikey for the mocked interface is: sk_test_super_secret_key
 
 The following routes will be added to your application to mimic Pidgen:
 
@@ -94,7 +96,7 @@ The value for the private API key. Available in the Stripe admin gui.
 
 =head2 exceptions
 
-In synchronous mode, this will cause exceptions to be thrown if there is any problem
+This will cause exceptions to be thrown if there is any problem
 with submitting the invoice to pingen.
 
 =cut
@@ -301,7 +303,7 @@ sub _tx_to_json {
         }
     }
     if ($self->exceptions and $json->{error}){
-        Mojo::Exception->throw($json->errormessage);
+        Mojo::Exception->throw($json->{errormessage});
     }
     return $json;
 }
@@ -317,7 +319,7 @@ sub _build_res_cb {
 
 sub _mock_interface {
     my ($self, $app) = @_;
-    my $apikey = $self->apikey;
+    my $apikey = 'sk_test_super_secret_key';
 
     $self->_ua->server->app($app);
     $self->base_url('/mocked/pingen');
