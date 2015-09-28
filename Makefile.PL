@@ -7,7 +7,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
   NAME         => 'Mojolicious::Plugin::Pingen',
   VERSION_FROM => 'lib/Mojolicious/Plugin/Pingen.pm',
-  ABSTRACT     => 'Easily submit your documetns to pingen for printing and mailing',
+  ABSTRACT     => 'Easily submit your documents to pingen for printing and mailing',
   AUTHOR       => 'Tobias Oetiker <tobi@oetiker.ch>',
   LICENSE      => 'gpl_3',
   PREREQ_PM    => {

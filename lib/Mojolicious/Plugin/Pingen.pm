@@ -1,4 +1,11 @@
 package Mojolicious::Plugin::Pingen;
+use Mojo::Base 'Mojolicious::Plugin';
+use Mojo::UserAgent;
+use Mojo::JSON;
+use POSIX qw(strftime);
+use Mojo::Exception;
+use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
+our $VERSION = '0.2.1';
 
 =head1 NAME
 
@@ -6,7 +13,7 @@ Mojolicious::Plugin::Pingen - Print Package Send Physical letters
 
 =head1 VERSION
 
-0.1.1
+0.2.0
 
 =head1 DESCRIPTION
 
@@ -69,15 +76,6 @@ The following routes will be added to your application to mimic Pidgen:
 
 =cut
 
-use Mojo::Base 'Mojolicious::Plugin';
-use Mojo::UserAgent;
-use Mojo::JSON;
-use POSIX qw(strftime);
-use Mojo::Exception;
-
-use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
-
-our $VERSION = '0.2.0';
 
 =head1 ATTRIBUTES
 
@@ -198,7 +196,6 @@ sub register {
     for (grep { $self->can($_) } keys %$config) {
         $self->{$_} = $config->{$_};
     }
-
     # self contained
     $self->_mock_interface($app, $config) if $config->{mocked};
 
@@ -294,16 +291,18 @@ sub _tx_to_json {
     my $self = shift;
     my $tx = shift;
     my $error = $tx->error     || {};
-    my $json  = $tx->res->json || {};
+    my $json;
     if ($error->{code}){
         $json = {
             error => Mojo::JSON::true,
             errormessage => $error->{message},
             errorcode => $error->{code}
-        }
+        };
+        Mojo::Exception->throw($json->{errormessage})
+            if $self->exceptions;
     }
-    if ($self->exceptions and $json->{error}){
-        Mojo::Exception->throw($json->{errormessage});
+    else {
+        $json  = $tx->res->json || {};
     }
     return $json;
 }
