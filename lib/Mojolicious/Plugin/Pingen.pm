@@ -5,7 +5,7 @@ use Mojo::JSON;
 use POSIX qw(strftime);
 use Mojo::Exception;
 use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
-our $VERSION = '0.2.1';
+our $VERSION = '0.2.2';
 
 =head1 NAME
 
@@ -194,7 +194,7 @@ sub register {
 
     # copy config to this object
     for (grep { $self->can($_) } keys %$config) {
-        $self->{$_} = $config->{$_};
+        $self->{$_}  = $config->{$_};
     }
     # self contained
     $self->_mock_interface($app, $config) if $config->{mocked};
@@ -298,11 +298,12 @@ sub _tx_to_json {
             errormessage => $error->{message},
             errorcode => $error->{code}
         };
-        Mojo::Exception->throw($json->{errormessage})
-            if $self->exceptions;
     }
     else {
         $json  = $tx->res->json || {};
+    }
+    if ($self->exceptions and $json->{error}){
+        Mojo::Exception->throw($json->{errormessage})
     }
     return $json;
 }

@@ -59,7 +59,7 @@ use Test::More;
 my $t = Test::Mojo->new;
 my %form;
 
-$t->post_ok('/send/0', form => { file => { content => '%!pdf', filename=>'hellovelo'} })->status_is(200)->json_is('/error', 0);
+$t->post_ok('/send/0', form => { file => { content => '%!pdf', filename=>'hellovelo'} })->status_is(200)->json_is('/error', Mojo::JSON::false);
 $t->post_ok('/send/1', form => { file => { content => '%!pdf', filename=>'hellovelo'} })->status_is(200)->json_is('/errormessage', 'You do not have rights to access this object');
 $t->post_ok('/send/2', form => { file => { content => '%!pdf', filename=>'hellovelo'} })->status_is(200)->json_is('/errormessage', 'You do not have rights to access this object');
 $t->post_ok('/send/3', form => { file => { content => '%!pdf', filename=>'hellovelo'} })->status_is(200)->json_is('/errormessage', 'You do not have rights to access this object');

@@ -6,3 +6,4 @@ Changes
 lib/Mojolicious/Plugin/Pingen.pm
 t/01async.t
 t/02sync.t
+t/03apikey.t
