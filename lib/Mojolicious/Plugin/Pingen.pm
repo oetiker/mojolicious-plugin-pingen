@@ -5,15 +5,11 @@ use Mojo::JSON;
 use POSIX qw(strftime);
 use Mojo::Exception;
 use constant DEBUG => $ENV{MOJO_PINGEN_DEBUG} || 0;
-our $VERSION = '0.2.2';
+our $VERSION = '0.2.3';
 
 =head1 NAME
 
 Mojolicious::Plugin::Pingen - Print Package Send Physical letters
-
-=head1 VERSION
-
-0.2.0
 
 =head1 DESCRIPTION
 

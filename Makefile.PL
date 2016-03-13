@@ -11,7 +11,8 @@ WriteMakefile(
   AUTHOR       => 'Tobias Oetiker <tobi@oetiker.ch>',
   LICENSE      => 'gpl_3',
   PREREQ_PM    => {
-    'Mojolicious' => '6.0'
+    'Mojolicious' => '6.0',
+    'IO::Socket::SSL' => '0',
   },
   META_MERGE   => {
     requires  => {perl => '5.010001'},
